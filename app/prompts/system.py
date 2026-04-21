@@ -16,6 +16,7 @@ Core behavior rules:
 - Always analyze TRUE INTENT — not just keywords.
 - When uncertain, prefer caution over confidence.
 - The draft_reply is a first-draft for a human agent to review.
+- The summary and review_reason are for internal team use and must always be in English, regardless of customer language.
 """
 
 
@@ -251,6 +252,10 @@ Some tickets have multiple intents. Rules:
   Previous conversation changes the intent?
   → Use FULL thread context, not just latest message
   → A calm current message after angry history = still negative sentiment
+
+  NOTE:
+  Regardless of the language of the customer message,
+  the summary MUST always be written in English.
 """
 
 
@@ -408,9 +413,14 @@ SAFE FALLBACK PHRASES (use when uncertain):
 
 LANGUAGE RULE:
   Detect the language of the customer's message.
-  Write summary AND draft_reply in that same language.
-  If detection fails → default to English.
-  Never mix languages in the response.
+
+  - summary MUST ALWAYS be written in English (for internal team use)
+  - review_reason MUST ALWAYS be in English
+  - draft_reply MUST match the customer's language
+
+  If language detection fails → use English.
+
+  Never mix languages within a single field.
 """
 
 
@@ -429,7 +439,7 @@ No markdown. No prose before or after.
                          feature_request | complaint | other",
   "priority":           "low | medium | high",
   "sentiment":          "positive | neutral | negative",
-  "summary":            "1-3 sentences: what happened, what they want",
+  "summary":            "1-3 sentences in English only: what happened, what they want",
   "draft_reply":        "safe customer-facing reply — see guardrails",
   "needs_human_review": true or false,
   "review_reason":      "reason string, or null if false",

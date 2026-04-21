@@ -148,6 +148,7 @@ def analyze_ticket_logic(ticket: TicketRequest) -> TicketResponse:
 
     if not fallback_used:
         # Smart override — rules and LLM combined decision
+        increment("llm_response_tickets")
         logger.info(
             f"[{request_id}] LLM raw decision | "
             f"review={result.needs_human_review} | "
