@@ -128,15 +128,49 @@ def analyze_ticket_logic(ticket: TicketRequest) -> TicketResponse:
             result = _fallback("LLM output parsing failed after retry")
 
     # Rule overrides — rules always win
+    # if not fallback_used:
+    #     increment("llm_response_tickets")
+    #     # needs_human_review — rules can only set to true, never false
+    #     if rule_result.needs_human_review:
+    #         result.needs_human_review = True
+    #         if not result.review_reason:
+    #             result.review_reason = ", ".join(rule_result.review_reasons)
+
+    #     # priority — rules can only upgrade, never downgrade
+    #     if rule_result.forced_priority:
+    #         RANK = {"low": 0, "medium": 1, "high": 2}
+    #         current = result.priority.value if hasattr(result.priority, "value") else result.priority
+    #         forced = rule_result.forced_priority
+    #         if RANK[forced] > RANK[current]:
+    #             result.priority = PriorityEnum(forced)
+
+
+
     if not fallback_used:
-        increment("llm_response_tickets")
-        # needs_human_review — rules can only set to true, never false
+        # Smart override — rules and LLM combined decision
+        logger.info(
+            f"[{request_id}] LLM raw decision | "
+            f"review={result.needs_human_review} | "
+            f"confidence={result.confidence_score}"
+        )
         if rule_result.needs_human_review:
-            result.needs_human_review = True
-            if not result.review_reason:
+            if result.needs_human_review:
+                # Both rules and LLM flagged — definite escalation
+                result.needs_human_review = True
                 result.review_reason = ", ".join(rule_result.review_reasons)
 
-        # priority — rules can only upgrade, never downgrade
+            elif result.confidence_score >= 0.80:
+                # Only rules flagged — LLM is confident and disagrees
+                # Trust the LLM decision
+                result.needs_human_review = False
+
+            else:
+                # Only rules flagged — LLM is uncertain
+                # Stay on safe side and escalate
+                result.needs_human_review = True
+                result.review_reason = ", ".join(rule_result.review_reasons)
+
+        # Priority — rules can only upgrade, never downgrade
         if rule_result.forced_priority:
             RANK = {"low": 0, "medium": 1, "high": 2}
             current = result.priority.value if hasattr(result.priority, "value") else result.priority
