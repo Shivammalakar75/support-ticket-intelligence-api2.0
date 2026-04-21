@@ -1,6 +1,7 @@
 
 
 # app/schemas/enums.py
+
 # Enum values
 
 from enum import Enum

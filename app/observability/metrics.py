@@ -3,8 +3,9 @@
 
 metrics = {
     "total_tickets": 0,
-    "fallback_used": 0,
-    "human_review": 0
+    "fallback_tickets": 0,
+    "human_review_tickets": 0,
+    "llm_response_tickets": 0
 }
 
 

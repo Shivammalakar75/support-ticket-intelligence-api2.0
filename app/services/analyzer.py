@@ -14,6 +14,7 @@ from app.services.prompt_builder import build_user_prompt
 from app.services.deterministic_rules import apply_rules
 from app.services.llm import call_llm
 from app.utils.logger import logger
+from app.observability.metrics import increment
 
 # this is the extra information for retry mechenism to clearify (LLMs previouse answer was un structured or currupted)
 RETRY_SUFFIX = (
@@ -56,6 +57,7 @@ def _parse(raw: str) -> TicketResponse:
 
 def _fallback(reason: str) -> TicketResponse:
     """ Safe default response or fallback response when LLM fails completely """
+    increment("fallback_tickets")
     return TicketResponse(
         category="other",
         priority="medium",
@@ -127,7 +129,7 @@ def analyze_ticket_logic(ticket: TicketRequest) -> TicketResponse:
 
     # Rule overrides — rules always win
     if not fallback_used:
-
+        increment("llm_response_tickets")
         # needs_human_review — rules can only set to true, never false
         if rule_result.needs_human_review:
             result.needs_human_review = True
