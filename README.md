@@ -1,7 +1,7 @@
 
 # Support Ticket Intelligence API
 
-A production-minded FastAPI service that analyzes customer support tickets
+A production-minded FastAPI service that analyzes **customer support tickets**
 using a hybrid of deterministic rules and LLM-based intent analysis.
 
 The system automatically classifies tickets, detects sentiment, assigns
@@ -13,7 +13,7 @@ LLM is unavailable.
 
 ## Project Overview
 
-🔹 This system processes customer support tickets and automatically:
+**This system processes customer support tickets and automatically:**
 
 - Classifies the ticket (billing, technical, refund, account, feature_request, complaint, other)
 - Detects sentiment (positive, neutral, negative)
@@ -22,7 +22,7 @@ LLM is unavailable.
 - Generates a safe draft reply (customer-facing)
 - Determines whether human review is required
 
-🔹The system ensures **safe automation with human oversight for risky cases**.
+The system ensures **safe automation with human oversight for risky cases**.
 
 ---
 
@@ -61,7 +61,7 @@ LLM is unavailable.
 
 ## System Design & Decision Flow
 
-🔹 This system follows a hybrid intelligence approach, where responsibilities are clearly separated between LLM and Rule Engine.
+- This system follows a hybrid intelligence approach, where responsibilities are clearly separated between LLM and Rule Engine.
 
 ### Decision Responsibility Matrix (LLM vs Rule Engine)  
 
@@ -169,7 +169,7 @@ Rule Engine can only set needs_human_review to true, never false.
 
 ## Human Review is triggers when
 
-🔹 Human review is required when:  
+**Human review is required when:**  
 
 - Refund request detected
 - Legal or chargeback threat
@@ -180,7 +180,7 @@ Rule Engine can only set needs_human_review to true, never false.
 - Vague or unclear message
 - If ANY condition is true → needs_human_review = true   
 
-🔹 Why Hybrid Approach?  
+**Why Hybrid Approach?**  
 - LLM = understanding layer (probabilistic)
 - Rules = safety layer (deterministic)
 
@@ -212,11 +212,11 @@ Rule Engine can only set needs_human_review to true, never false.
 
 ## Test Scenarios
 
-🔹Run:
+**Run :**
 ```bash
 pytest
 ```
-🔹Covered Cases:   
+**Covered Cases:**   
 - Duplicate billing complaint
 - Payment failure (calm user)
 - Account login issue
@@ -230,7 +230,7 @@ pytest
 
 ## Observability
 
-🔹System logs include:  
+**System logs include:**  
 - request_id (unique tracking)
 - processing time
 - fallback usage
@@ -295,7 +295,7 @@ GEMINI_API_KEY=test pytest tests/ -v
 
 ## Final Summary
 
-🔹This project demonstrates:
+**This project demonstrates:**
 
 - Real-world backend system design
 - FastAPI production API development
