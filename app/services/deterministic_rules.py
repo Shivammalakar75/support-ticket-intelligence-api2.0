@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass, field
 from typing import Optional
-
+from app.utils.logger import logger
 
 # Trigger phrase lists 
 
@@ -50,94 +50,29 @@ class RuleResult:
 
 
 # Core rule engine 
-# NEGATION_WORDS = [
-#     "do not want", "don't want",
-#     "not going to file",
-#     "want to avoid", "hoping to avoid",
-#     "no intention of",
-#     "nahi karunga", "nahi chahiye",
-#     "nahi karna chahta",
-# ]
-
-# def _is_negated(text: str, phrase: str) -> bool:
-#     phrase_index = text.find(phrase)
-#     if phrase_index == -1:
-#         return False
-    
-#     # 40 chars pehle bhi check karo
-#     before = text[max(0, phrase_index - 40):phrase_index]
-    
-#     # 40 chars baad bhi check karo
-#     after = text[phrase_index:phrase_index + 50]
-    
-#     nearby_text = before + " " + after
-    
-#     return any(neg in nearby_text for neg in NEGATION_WORDS)
-
-
-
-import re
-import spacy
-
-nlp = spacy.load("en_core_web_sm")
-
-NEG_WORDS = {
-    "not", "no", "never", "n't",
-    "nahi", "mat"
-}
-
-def _normalize(text: str) -> str:
-    return re.sub(r"\s+", " ", text.lower()).strip()
-
-
-def _window_negation(words, idx, window_size=3):
-    window = words[max(0, idx - window_size): idx + window_size + 1]
-    return any(w in NEG_WORDS for w in window)
-
-
-def _pattern_negation(text: str, phrase: str) -> bool:
-    # direct strong patterns (fast + reliable)
-    patterns = [
-        rf"\bnot\s+\w*\s*{phrase}\b",
-        rf"\b{phrase}\s+not\b",
-        rf"\bno\s+\w*\s*{phrase}\b",
-        rf"\b{phrase}\s+nahi\b",
-        rf"\bnahi\s+\w*\s*{phrase}\b",
-    ]
-    return any(re.search(p, text) for p in patterns)
-
+NEGATION_WORDS = [
+    "do not want", "don't want",
+    "not going to file",
+    "want to avoid", "hoping to avoid",
+    "no intention of",
+    "nahi karunga", "nahi chahiye",
+    "nahi karna chahta",
+]
 
 def _is_negated(text: str, phrase: str) -> bool:
-    text = _normalize(text)
-    phrase = phrase.lower()
-
-    # 1️⃣ Strong pattern match (highest priority)
-    if _pattern_negation(text, phrase):
-        return True
-
-    words = text.split()
-
-    # 2️⃣ Window-based check (Hinglish + broken grammar)
-    for i, w in enumerate(words):
-        if phrase in w:
-            if _window_negation(words, i):
-                return True
-
-    # 3️⃣ spaCy dependency (only clean English)
-    doc = nlp(text)
-
-    for token in doc:
-        if phrase in token.text:
-            # direct neg child
-            if any(child.dep_ == "neg" for child in token.children):
-                return True
-
-            # neg attached to head verb (e.g. "not file chargeback")
-            if any(child.dep_ == "neg" for child in token.head.children):
-                return True
-
-    return False
-
+    phrase_index = text.find(phrase)
+    if phrase_index == -1:
+        return False
+    
+    # 40 chars pehle bhi check karo
+    before = text[max(0, phrase_index - 40):phrase_index]
+    
+    # 40 chars baad bhi check karo
+    after = text[phrase_index:phrase_index + 50]
+    
+    nearby_text = before + " " + after
+    
+    return any(neg in nearby_text for neg in NEGATION_WORDS)
 
 def apply_rules(ticket) -> RuleResult:
     text = (
@@ -201,7 +136,7 @@ def apply_rules(ticket) -> RuleResult:
             result.inject_context.append(
                 "ALERT: Customer wants to cancel their account. "
                 "Do NOT confirm cancellation in draft_reply. "
-                "Acknowledge and say the team will follow up."
+                "Acknowledge the request and say it will be reviewed."
             )
             break
 
@@ -225,5 +160,7 @@ def apply_rules(ticket) -> RuleResult:
             "Set confidence_score low (below 0.60). "
             "Ask one specific clarifying question in draft_reply."
         )
+
+    logger.info(f"from Rule engine --> {result}")
 
     return result
