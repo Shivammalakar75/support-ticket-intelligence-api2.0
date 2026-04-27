@@ -3,7 +3,7 @@
 
 from pydantic import BaseModel, Field
 from typing import Optional
-from app.schemas.enums import CategoryEnum, PriorityEnum, SentimentEnum
+from app.dto.enums import CategoryEnum, PriorityEnum, SentimentEnum
 
 # pydantic schema (Response validation)
 class TicketResponse(BaseModel):

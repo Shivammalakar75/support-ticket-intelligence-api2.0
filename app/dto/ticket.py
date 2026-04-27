@@ -4,7 +4,7 @@
 from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional, List
 from datetime import datetime
-from app.schemas.enums import ChannelEnum
+from app.dto.enums import ChannelEnum
 
 # this function is used to attech screenshots or imgs of problem like
 class AttachmentMeta(BaseModel):

@@ -6,13 +6,13 @@ import re
 import time
 import uuid
 
-from app.schemas.ticket import TicketRequest
-from app.schemas.response import TicketResponse
-from app.schemas.enums import PriorityEnum
+from app.dto.ticket import TicketRequest
+from app.dto.response import TicketResponse
+from app.dto.enums import PriorityEnum
 from app.prompts.system import SYSTEM_PROMPT
-from app.services.prompt_builder import build_user_prompt
-from app.services.deterministic_rules import apply_rules
-from app.services.llm import call_llm
+from app.modules.services.prompt_builder import build_user_prompt
+from app.modules.services.deterministic_rules import apply_rules
+from app.modules.services.llm import call_llm
 from app.observability.metrics import increment
 import logging
 

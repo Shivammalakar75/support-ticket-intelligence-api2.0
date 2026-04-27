@@ -30,21 +30,21 @@ The system ensures **safe automation with human oversight for risky cases**.
 
 ```
 support-ticket-api/
+├── main.py           
 ├── app/
-│   ├── main.py
-│   ├── api/
-│   │   └── routes.py
+│   ├── modules/
+│   │   ├── routes.py
+│   │   └── services/
+│   │       ├── analyzer.py
+│   │       ├── deterministic_rules.py
+│   │       ├── llm.py
+│   │       └── prompt_builder.py
 │   ├── core/
 │   │   └── config.py
-│   ├── schemas/
+│   ├── dto/
 │   │   ├── ticket.py
 │   │   ├── response.py
 │   │   └── enums.py
-│   ├── services/
-│   │   ├── analyzer.py
-│   │   ├── deterministic_rules.py
-│   │   ├── llm.py
-│   │   └── prompt_builder.py
 │   ├── prompts/
 │   │   └── system.py
 │   ├── observability/
@@ -54,6 +54,11 @@ support-ticket-api/
 ├── tests/
 │   ├── test_analyzer.py
 │   └── test_rules.py
+├── tickets/
+│   └── sample_tickets.json
+├── logs/
+│   ├── app.log
+│   └── error.log
 ├── .env.example
 ├── requirements.txt
 ├── DESIGN.md
@@ -409,7 +414,7 @@ cp .env.example .env
 # Add your GEMINI_API_KEY to .env file
 
 # 3. Run server
-uvicorn app.main:app --reload
+uvicorn main:app --reload
 # Server: http://localhost:8000
 # Docs:   http://localhost:8000/docs
 

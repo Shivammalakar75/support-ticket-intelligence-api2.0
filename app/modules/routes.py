@@ -2,9 +2,9 @@
 
 from fastapi import APIRouter
 from app.core.config import settings
-from app.schemas.ticket import TicketRequest
-from app.schemas.response import TicketResponse
-from app.services.analyzer import analyze_ticket_logic
+from app.dto.ticket import TicketRequest
+from app.dto.response import TicketResponse
+from app.modules.services.analyzer import analyze_ticket_logic
 from app.observability.metrics import increment, get_metrics
 import logging
 logger = logging.getLogger(__name__)

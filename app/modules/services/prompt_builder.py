@@ -4,8 +4,8 @@
 # Builds a fresh user prompt for every ticket request.
 # Injects ticket data + rule engine alerts dynamically.
 
-from app.schemas.ticket import TicketRequest
-from app.services.deterministic_rules import RuleResult
+from app.dto.ticket import TicketRequest
+from app.modules.services.deterministic_rules import RuleResult
 
 
 def build_user_prompt(ticket: TicketRequest, rule_result: RuleResult) -> str:
