@@ -27,7 +27,7 @@ def build_user_prompt(ticket: TicketRequest, rule_result: RuleResult) -> str:
     else:
         alerts_block = ""
 
-    # Optional fields — only include if present
+    # Optional fields - only include if present
     optional_lines = []
 
     if ticket.product_area:

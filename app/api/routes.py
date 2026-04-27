@@ -6,6 +6,8 @@ from app.schemas.ticket import TicketRequest
 from app.schemas.response import TicketResponse
 from app.services.analyzer import analyze_ticket_logic
 from app.observability.metrics import increment, get_metrics
+import logging
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # Health func to check API is running or not
@@ -21,12 +23,24 @@ def health():
 @router.post("/analyze-ticket", response_model=TicketResponse)
 async def analyze_ticket(ticket: TicketRequest):
 
-    result = await analyze_ticket_logic(ticket)
-    increment("total_tickets")
+    try:
+        logger.info(f"[API] /analyze-ticket called")
 
-    if result.needs_human_review:
-        increment("human_review_tickets")
-    return result
+        result = await analyze_ticket_logic(ticket)
+        increment("total_tickets")
+
+        if result.needs_human_review:
+            increment("human_review_tickets")
+
+        logger.info(
+            f"[API] Ticket processed | id={ticket.ticket_id}"
+        )
+
+        return result
+
+    except Exception as e:
+        logger.error(f"[API] Failed to process ticket: {e}")
+        raise
  
 @router.get("/stats")
 def stats():
