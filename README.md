@@ -339,7 +339,10 @@ GEMINI_API_KEY=test pytest tests/ -v
 - Rule engine is keyword-based and does not handle negation
   (e.g., "I do NOT want a refund" may be incorrectly flagged)
 - LLM confidence score is self-reported and not externally verified
-- previous_conversation field is not currently injected into the prompt
+- `previous_conversation` field is accepted in the request 
+  but not currently injected into the prompt. 
+  Multi-turn conversation context is not used in analysis.
+  Planned as a future improvement.
 - Single LLM provider - if Gemini is unavailable, system relies on fallback
 - In-memory metrics reset on server restart
 - No authentication layer
