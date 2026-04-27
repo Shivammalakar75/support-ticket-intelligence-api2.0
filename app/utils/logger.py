@@ -1,9 +1,10 @@
 import logging
 from logging.handlers import RotatingFileHandler
 import os
+from pathlib import Path
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LOG_DIR = os.path.join(BASE_DIR, "logs")
+BASE_DIR = Path(__file__).resolve().parents[2]
+LOG_DIR = BASE_DIR / "logs"
 
 os.makedirs(LOG_DIR, exist_ok=True)
 
@@ -25,7 +26,7 @@ console_handler.setFormatter(console_formatter)
 
 # File Handler (full logs)
 file_handler = RotatingFileHandler(
-    os.path.join(LOG_DIR, "app.log"),
+    LOG_DIR / "app.log",
     maxBytes=5_000_000,
     backupCount=3
 )
@@ -38,7 +39,7 @@ file_handler.setFormatter(file_formatter)
 
 # Error File Handler (only errors)
 error_handler = RotatingFileHandler(
-    os.path.join(LOG_DIR, "error.log"),
+    LOG_DIR / "error.log",
     maxBytes=2_000_000,
     backupCount=2
 )

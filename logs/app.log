@@ -1,0 +1,13 @@
+2026-04-27 16:18:04,849 | INFO | app.api.routes | [API] /analyze-ticket called
+2026-04-27 16:18:04,849 | INFO | app.services.analyzer | [b3142a34-75a2-44d9-8eb6-99283e6de564] Ticket received: TKT-009
+2026-04-27 16:18:04,849 | INFO | app.services.analyzer | [b3142a34-75a2-44d9-8eb6-99283e6de564] Running rule engine
+2026-04-27 16:18:04,850 | DEBUG | app.services.deterministic_rules | [RULE] Evaluating rules
+2026-04-27 16:18:04,851 | INFO | app.services.deterministic_rules | [RULE] review=False | priority=None | reasons=[]
+2026-04-27 16:18:04,851 | DEBUG | app.services.analyzer | [b3142a34-75a2-44d9-8eb6-99283e6de564] Prompt built
+2026-04-27 16:18:04,851 | INFO | app.services.analyzer | [b3142a34-75a2-44d9-8eb6-99283e6de564] Calling LLM (attempt 1)
+2026-04-27 16:18:18,880 | DEBUG | app.services.analyzer | [b3142a34-75a2-44d9-8eb6-99283e6de564] LLM raw response received
+2026-04-27 16:18:18,881 | DEBUG | app.services.analyzer | [b3142a34-75a2-44d9-8eb6-99283e6de564] LLM response parsed successfully
+2026-04-27 16:18:18,881 | INFO | app.services.analyzer | [b3142a34-75a2-44d9-8eb6-99283e6de564] LLM attempt 1 succeeded
+2026-04-27 16:18:18,882 | INFO | app.services.analyzer | [b3142a34-75a2-44d9-8eb6-99283e6de564] LLM raw decision | review=False | confidence=1.0
+2026-04-27 16:18:18,882 | INFO | app.services.analyzer | [b3142a34-75a2-44d9-8eb6-99283e6de564] Done | time=14.033s | category=other | priority=low | fallback=False | review=False
+2026-04-27 16:18:18,882 | INFO | app.api.routes | [API] Ticket processed | id=TKT-009
