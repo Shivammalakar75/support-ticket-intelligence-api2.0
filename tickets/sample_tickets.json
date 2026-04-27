@@ -107,5 +107,14 @@
     "subject": "issue with account and billing maybe",
     "message": "Hi, something is not working properly. I think I was charged but also I can't access some features anymore. Not sure if it's billing or account issue. Please check this quickly.",
     "product_area": "unknown"
+  },
+  {
+    "ticket_id": "TEST-HR-001",
+    "customer_name": "Carlos Mendez",
+    "customer_email": "carlos@example.com",
+    "channel": "email",
+    "subject": "Unacceptable charges and legal action",
+    "message": "This is absolutely unacceptable. You charged me twice and nobody is fixing it. I want a full refund immediately or I will take legal action and file a chargeback with my bank. This is fraud.",
+    "product_area": "billing"
   }
 ]

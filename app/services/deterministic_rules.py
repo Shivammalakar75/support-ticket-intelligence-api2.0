@@ -42,9 +42,9 @@ REFUND_DEMANDS = [
 ]
 
 CANCELLATION_DEMANDS = [
-    "cancel my account", "cancel my subscription",
+    "cancel my account now", "cancel my subscription now",
     "delete my account", "close my account",
-    "i want to cancel", "terminate my account",
+    "i want to cancel my", "terminate my account",
 ]
 
 
