@@ -151,6 +151,31 @@ INFO (treat as complaint or other):
   → Customer asking for information
   → NOT a threat — do not flag unless tone is hostile
 
+
+────────────────────────────────────────────────────
+CHARGEBACK — category determination
+────────────────────────────────────────────────────
+
+Chargeback word alone does NOT determine category.
+Always look for the underlying issue first.
+
+Underlying issue is billing related:
+  "You charged me twice and I want to avoid chargeback"
+  "Wrong amount billed, considering chargeback"
+  -> category = billing
+
+Underlying issue is technical:
+  "System not working, I may file chargeback"
+  -> category = technical
+
+No underlying issue mentioned — context unclear:
+  "I want to avoid a chargeback, please help"
+  "Please help me with chargeback"
+  -> category = other
+  -> confidence_score = low (max 0.50)
+  -> needs_human_review = true
+  -> ask ONE clarifying question in draft_reply
+
 ════════════════════════════════════════════════════
 NEGATION CHECK BEFORE CLASSIFYING
 ════════════════════════════════════════════════════
@@ -177,7 +202,7 @@ REFUND — negation examples
 NEGATED — do NOT classify as refund:
   "I do NOT want a refund, just fix the bug"
   "mujhe refund nahi chahiye, bas problem fix karo"
-  - Customer wants fix → category = technical or billing
+  - Customer wants fix -> category = technical or billing
   - needs_human_review = false
   - priority = medium or low
 
@@ -274,7 +299,7 @@ CLASSIFICATION_RULES = """
 PRIORITY RULES
 ════════════════════════════════════════════════════
 
-high →
+high ->
   - Legal threat, chargeback, or regulatory complaint
     (EXCEPTION: negated threats like "I do NOT want chargeback"
     do not qualify — treat as medium or low based on other signals)
@@ -290,16 +315,16 @@ high →
   - Customer explicitly mentions urgency
     ("urgent", "asap", "immediately", "right now")
     EXCEPTION: "not urgent", "no rush", "when you get time"
-    → do NOT assign high — use actual issue severity instead
+    -> do NOT assign high — use actual issue severity instead
 
-medium →
+medium ->
   - Billing issue without threat
   - Partial outage or intermittent bug
   - Account access issue (not fully locked)
   - Reproducible bug affecting workflow
   - Frustrated tone without threats
 
-low →
+low ->
   - General how-to question
   - Feature request with calm tone
   - Minor inconvenience or cosmetic bug
@@ -313,16 +338,16 @@ low →
 SENTIMENT RULES
 ════════════════════════════════════════════════════
 
-positive →
+positive ->
   Satisfied, grateful, complimenting the product or team.
   "Thanks for the quick help!" / "Love this feature"
 
-neutral →
+neutral ->
   Informational, calm, matter-of-fact.
   "My invoice shows X amount" / "I cannot log in"
   No emotional charge either way.
 
-negative →
+negative ->
   Frustrated, angry, disappointed, threatening.
   "This is unacceptable" / "Worst support ever"
   Any hostile or aggressive tone.
@@ -334,27 +359,29 @@ negative →
 CONFIDENCE SCORE RULES
 ════════════════════════════════════════════════════
 
-0.90 – 1.00 → single clear interpretation, obvious intent
-0.70 – 0.89 → mostly clear, minor ambiguity in tone or category
-0.50 – 0.69 → multiple interpretations possible, some vagueness
-0.00 – 0.49 → very vague, almost no usable information
+0.90 - 1.00 -> single clear interpretation, obvious intent
+0.70 - 0.89 -> mostly clear, minor ambiguity in tone or category
+0.50 - 0.69 -> multiple interpretations possible, some vagueness
+0.00 - 0.49 -> very vague, almost no usable information
 
 Hard caps — apply the LOWEST cap if multiple apply:
-  - Multiple category signals present         → max 0.70
-  - Mixed action and info intent              → max 0.70
-  - Explicit refund with other issues         → max 0.70
+  - Multiple category signals present         -> max 0.70
+  - Mixed action and info intent              -> max 0.70
+  - Explicit refund with other issues         -> max 0.70
   - Message is in mixed languages
-    or unclear script                         → max 0.75
+    or unclear script                         -> max 0.75
   - Customer uses uncertain words
     (maybe, not sure, I think, possibly,
-     could be, not certain)                   → max 0.65
-  - Three or more issues mentioned            → max 0.60
+     could be, not certain)                   -> max 0.65
+  - Three or more issues mentioned            -> max 0.60
   - Message is extremely vague with
-    almost no usable detail                   → max 0.49
+    almost no usable detail                   -> max 0.49
+  - Chargeback mentioned but underlying       
+    issue not clear                           -> max 0.50
 
 ════════════════════════════════════════════════════
 HUMAN REVIEW TRIGGERS
-════════════════════════════════════════════════════
+═════════════════════════════════════════
 
 Set needs_human_review = true if ANY of these apply:
 
@@ -397,7 +424,7 @@ DRAFT REPLY RULES
 The draft_reply is a first-draft for a human agent.
 It must be safe, professional, and non-committal.
 
-✅ ALWAYS DO:
+ ALWAYS DO:
   - Address the customer by their first name
   - Acknowledge the specific issue they reported
   - State next steps in a NON-COMMITTAL way 
@@ -407,7 +434,7 @@ It must be safe, professional, and non-committal.
   - Keep it under 80 words unless complexity requires more
   - Sound human, empathetic, and calm (not robotic)
 
-❌ NEVER DO:
+ NEVER DO:
   - Promise a refund, credit, or any compensation
   - Confirm or deny charges without verified data
   - Give specific resolution timelines

@@ -74,7 +74,7 @@ def _fallback(reason: str) -> TicketResponse:
 
 
 
-def analyze_ticket_logic(ticket: TicketRequest) -> TicketResponse:
+async def analyze_ticket_logic(ticket: TicketRequest) -> TicketResponse:
     """
     Full analysis pipeline:
       1. Run hard rules
@@ -104,7 +104,7 @@ def analyze_ticket_logic(ticket: TicketRequest) -> TicketResponse:
     result = None
 
     try:
-        raw = call_llm(SYSTEM_PROMPT, user_prompt)
+        raw = await call_llm(SYSTEM_PROMPT, user_prompt)
         logger.info(f"from llm --- > {raw}")
         result = _parse(raw)
         logger.info(f"[{request_id}] LLM attempt 1 succeeded")
@@ -116,7 +116,7 @@ def analyze_ticket_logic(ticket: TicketRequest) -> TicketResponse:
 
         # Retry with strict prompt (previouse mistake from LLM + user prompt = retry machenism)
         try:
-            raw = call_llm(SYSTEM_PROMPT, user_prompt + RETRY_SUFFIX)
+            raw = await call_llm(SYSTEM_PROMPT, user_prompt + RETRY_SUFFIX)
             logger.info(f"from llm --- > {raw}")
             result = _parse(raw)
             logger.info(f"[{request_id}] LLM attempt 2 succeeded")
@@ -128,29 +128,6 @@ def analyze_ticket_logic(ticket: TicketRequest) -> TicketResponse:
             )
             fallback_used = True
             result = _fallback("LLM output parsing failed after retry")
-
-    # Rule overrides — rules always win
-    # if not fallback_used:
-    #     increment("llm_response_tickets")
-    #     logger.info(
-    #         f"[{request_id}] LLM raw decision | "
-    #         f"review={result.needs_human_review} | "
-    #         f"confidence={result.confidence_score}"
-    #     )
-    #     # needs_human_review — rules can only set to true, never false
-    #     if rule_result.needs_human_review:
-    #         result.needs_human_review = True
-    #         if not result.review_reason:
-    #             result.review_reason = ", ".join(rule_result.review_reasons)
-
-    #     # priority — rules can only upgrade, never downgrade
-    #     if rule_result.forced_priority:
-    #         RANK = {"low": 0, "medium": 1, "high": 2}
-    #         current = result.priority.value if hasattr(result.priority, "value") else result.priority
-    #         forced = rule_result.forced_priority
-    #         if RANK[forced] > RANK[current]:
-    #             result.priority = PriorityEnum(forced)
-
 
     if not fallback_used:
         increment("llm_response_tickets")
